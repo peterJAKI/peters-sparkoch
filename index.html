@@ -198,6 +198,10 @@ nav button.aktiv{color:var(--tuerkis-dunkel);background:var(--tuerkis-hell)}
 .ek-name{font-weight:800;font-size:21px}
 .ek-sub{color:var(--grau);font-size:16px}
 .ek-preis{font-weight:800;color:var(--tuerkis-dunkel);white-space:nowrap}
+.ek-rechts{display:flex;flex-direction:column;align-items:flex-end;gap:6px}
+.daheim{font-family:inherit;font-size:15px;font-weight:700;border:3px solid var(--tuerkis);background:var(--weiss);color:var(--tuerkis-dunkel);border-radius:10px;padding:6px 10px;min-height:44px;cursor:pointer;white-space:nowrap}
+.vo-menge{display:flex;align-items:center;gap:6px;font-weight:700;color:var(--grau)}
+.vo-menge input{width:92px;font-size:18px;padding:8px;text-align:right;border-radius:10px}
 .hilfe ul{margin:0;padding-left:22px}
 .hilfe li{margin-bottom:10px}
 .hilfe p{margin:0}
@@ -235,7 +239,7 @@ nav button.aktiv{color:var(--tuerkis-dunkel);background:var(--tuerkis-hell)}
   <section class="seite" id="seite-vorrat">
     <div class="karte">
       <h2>🥫 Was habe ich zu Hause?</h2>
-      <p class="hinweis" style="margin:0 0 12px">Öl, Brühe, Salz und Gewürze sind schon angekreuzt, die hat man meistens da. Nimm sie raus, falls nicht. Tippe an, was du sonst noch hast. Das kommt nicht auf den Einkaufszettel und kostet kein Budget. Die App plant bevorzugt Gerichte, die deinen Vorrat aufbrauchen.</p>
+      <p class="hinweis" style="margin:0 0 12px">Öl, Brühe, Salz und Gewürze sind schon angekreuzt, die hat man meistens da. Nimm sie raus, falls nicht. Tippe an, was du sonst noch hast. Bei angekreuzten Dingen kannst du optional eine Menge eintragen, dann zieht die App nur diese Menge ab. Leer lassen heißt: reicht immer. Das kommt nicht auf den Einkaufszettel und kostet kein Budget. Die App plant bevorzugt Gerichte, die deinen Vorrat aufbrauchen.</p>
       <input type="text" id="vo-suche" placeholder="🔍 Suchen, z. B. Reis" autocomplete="off" aria-label="Vorrat durchsuchen">
       <div class="zeile" style="margin-top:12px">
         <button class="knopf gold" id="vo-basis">⭐ Grundausstattung</button>
@@ -333,7 +337,15 @@ nav button.aktiv{color:var(--tuerkis-dunkel);background:var(--tuerkis-hell)}
       </div>
     </div>
 
-    <p class="stand">Peters Sparkoch · Version 2.4</p>
+    <div class="karte">
+      <h2>💾 Sichern</h2>
+      <p class="hinweis" style="margin:0 0 12px">Deine Daten liegen nur auf diesem Handy. Mit einer Sicherung verlierst du nichts, zum Beispiel bei einem neuen Handy. Die Sicherung ist eine kleine Datei (Einstellungen, Vorrat, Favoriten, Plan, Haken).</p>
+      <button class="knopf gold gross-knopf" id="sichern" style="margin-top:0">⬇ Sicherung speichern</button>
+      <button class="knopf gross-knopf" id="laden-knopf">⬆ Sicherung laden</button>
+      <input type="file" id="laden-datei" accept=".json,application/json" hidden>
+    </div>
+
+    <p class="stand">Peters Sparkoch · Version 2.6</p>
   </section>
 
   <!-- ANLEITUNG -->
@@ -376,6 +388,7 @@ nav button.aktiv{color:var(--tuerkis-dunkel);background:var(--tuerkis-hell)}
         <li>Was im Vorrat ist, kommt <b>nicht</b> auf den Einkaufszettel und kostet kein Budget.</li>
         <li><b>„⭐ Grundausstattung“</b> hakt Nudeln, Reis, Mehl und Gewürze auf einmal an.</li>
         <li><b>„🍳 Was kann ich damit kochen?“</b> zeigt dir passende Rezepte.</li>
+        <li><b>Menge (optional):</b> Bei angekreuzten Dingen kannst du eine Menge eintragen, zum Beispiel 500 g Reis. Dann zieht die App nur diese Menge ab. Leer heißt: reicht immer.</li>
       </ul>
     </div>
 
@@ -387,6 +400,7 @@ nav button.aktiv{color:var(--tuerkis-dunkel);background:var(--tuerkis-hell)}
         <li>Tippe auf ein Gericht: Du siehst Zutaten, Schritte, Kalorien und Preis.</li>
         <li><b>„🔄 Austauschen“</b> gibt dir ein anderes Gericht.</li>
         <li><b>„🔁 Morgen nochmal essen“:</b> Du kochst heute für 2 Tage, morgen wärmst du nur auf. Das spart Zeit.</li>
+        <li><b>„⏭ Überspringen“:</b> Isst du an einem Tag auswärts? Dann überspringe das Frühstück oder das Abendessen. Es wird nicht gekauft und kostet nichts. „↩ Wieder einplanen“ holt es zurück.</li>
         <li><b>★ Stern:</b> Merke dir Lieblingsgerichte.</li>
       </ul>
     </div>
@@ -396,6 +410,7 @@ nav button.aktiv{color:var(--tuerkis-dunkel);background:var(--tuerkis-hell)}
       <ul>
         <li>Der Zettel entsteht automatisch aus dem Plan, sortiert nach Bereichen, mit Menge und ungefährem Preis.</li>
         <li><b>Antippen = liegt im Einkaufswagen.</b> Die Zeile wird grün und rutscht nach unten.</li>
+        <li><b>„🏠 Hab ich“:</b> Hast du eine Zutat schon zu Hause? Tippe auf den kleinen Knopf rechts. Sie fällt vom Zettel, und der Preis sinkt. Unten unter „🏠 Hab ich zu Hause“ findest du sie wieder, dort kannst du sie mit „↩ Doch kaufen“ zurückholen.</li>
         <li><b>„↺ Alle Haken entfernen“:</b> Für den nächsten Einkauf. Das ändert den Verbrauch im Plan nicht.</li>
         <li><b>„🗑 Plan löschen“:</b> Löscht den Plan und setzt den Verbrauch auf 0.</li>
       </ul>
@@ -424,6 +439,7 @@ nav button.aktiv{color:var(--tuerkis-dunkel);background:var(--tuerkis-hell)}
       <h2>Gut zu wissen</h2>
       <ul>
         <li>Alles bleibt <b>nur auf deinem Handy</b>. Es gibt kein Konto und keinen Server.</li>
+        <li><b>💾 Sichern:</b> In den Einstellungen unten kannst du alles in eine Datei sichern und später wieder laden, zum Beispiel bei einem neuen Handy.</li>
         <li>Preise sind <b>ungefähre Durchschnittspreise</b> für deutsche Discounter, keine Live-Preise.</li>
         <li>Neue Version nicht sichtbar? Schließe die App ganz und öffne sie mit Internet nochmal.</li>
       </ul>
@@ -538,6 +554,67 @@ nav button.aktiv{color:var(--tuerkis-dunkel);background:var(--tuerkis-hell)}
   }
   document.querySelectorAll('nav button').forEach(function(b){
     b.addEventListener('click', function(){ zeigeSeite(b.dataset.seite); });
+  });
+
+  /* ---------- Sichern und Laden ---------- */
+  function sicherungMachen(){
+    var daten = {};
+    try{
+      for(var i = 0; i < localStorage.length; i++){
+        var k = localStorage.key(i);
+        if(k.indexOf('sparkoch.') === 0) daten[k] = localStorage.getItem(k);
+      }
+    }catch(x){}
+    var inhalt = JSON.stringify({app:'sparkoch', erstellt:new Date().toISOString(), daten:daten});
+    var d = new Date();
+    var name = 'sparkoch-sicherung-' + d.getFullYear() + '-' + ('0' + (d.getMonth() + 1)).slice(-2) + '-' + ('0' + d.getDate()).slice(-2) + '.json';
+    try{
+      var blob = new Blob([inhalt], {type:'application/json'});
+      var a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = name;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      setTimeout(function(){ URL.revokeObjectURL(a.href); }, 3000);
+      meldung('✔ Sicherung gespeichert');
+    }catch(x){
+      meldung('Sichern ging nicht. Bitte nochmal versuchen.');
+    }
+  }
+  function sicherungLaden(datei){
+    var leser = new FileReader();
+    leser.onload = function(){
+      var s;
+      try{ s = JSON.parse(leser.result); }catch(x){ s = null; }
+      if(!s || s.app !== 'sparkoch' || !s.daten || typeof s.daten !== 'object'){
+        meldung('Das ist keine Sparkoch-Sicherung.');
+        return;
+      }
+      if(!window.confirm('Sicherung laden? Deine jetzigen Daten auf diesem Handy werden ersetzt.')) return;
+      try{
+        var alt = [];
+        for(var i = 0; i < localStorage.length; i++){
+          var k = localStorage.key(i);
+          if(k.indexOf('sparkoch.') === 0) alt.push(k);
+        }
+        alt.forEach(function(k){ localStorage.removeItem(k); });
+        Object.keys(s.daten).forEach(function(k){
+          if(k.indexOf('sparkoch.') === 0 && typeof s.daten[k] === 'string') localStorage.setItem(k, s.daten[k]);
+        });
+        window.location.reload();
+      }catch(x){
+        meldung('Laden ging nicht.');
+      }
+    };
+    leser.readAsText(datei);
+  }
+  $('sichern').addEventListener('click', sicherungMachen);
+  $('laden-knopf').addEventListener('click', function(){ $('laden-datei').click(); });
+  $('laden-datei').addEventListener('change', function(e){
+    var f = e.target.files && e.target.files[0];
+    if(f) sicherungLaden(f);
+    e.target.value = '';
   });
 
   /* ---------- Anleitung ---------- */
@@ -886,6 +963,13 @@ nav button.aktiv{color:var(--tuerkis-dunkel);background:var(--tuerkis-hell)}
   function rezeptById(id){ return REZEPTE[id - 1]; }
   function fruehById(id){ return FRUEHSTUECK[id - 1]; }
   function imVorrat(id){ return (einst.vorrat || []).indexOf(id) >= 0; }
+  /* Wie viel muss noch gekauft werden? Im Vorrat ohne Menge = reicht immer, mit Menge = nur diese Menge abziehen. */
+  function restBedarf(id, bedarf){
+    if(!imVorrat(id)) return bedarf;
+    var m = einst.vorratMenge && einst.vorratMenge[id];
+    if(typeof m !== 'number') return 0;
+    return Math.max(0, bedarf - m);
+  }
 
   var plan = ladePlan();
   function ladePlan(){
@@ -902,21 +986,23 @@ nav button.aktiv{color:var(--tuerkis-dunkel);background:var(--tuerkis-hell)}
   }
 
   /* Abendessen-Menge pro Tag: 2 = es wird für zwei Tage gekocht, 0 = Reste von gestern (nur aufwärmen) */
-  function tagFaktor(t){ return t.rest ? 0 : (t.d ? 2 : 1); }
+  function tagFaktor(t){ return (t.sa || t.rest) ? 0 : (t.d ? 2 : 1); }
+  function fruehFaktor(t){ return t.sf ? 0 : 1; }
 
   /* Kosten = was man wirklich einkaufen muss (ganze Packungen). So lohnt sich Wiederverwenden. */
   function planKosten(tage){
     var n = einst.personen, bedarf = {};
     tage.forEach(function(t){
-      [[rezeptById(t.a).zutaten, tagFaktor(t)], [fruehById(t.f).zutaten, 1]].forEach(function(p){
+      [[rezeptById(t.a).zutaten, tagFaktor(t)], [fruehById(t.f).zutaten, fruehFaktor(t)]].forEach(function(p){
         if(!p[1]) return;
         p[0].forEach(function(x){ bedarf[x[0]] = (bedarf[x[0]] || 0) + x[1] * n * p[1]; });
       });
     });
     var s = 0;
     Object.keys(bedarf).forEach(function(id){
-      if(imVorrat(id)) return;
-      s += Math.ceil(bedarf[id] / ZUTATEN[id].packung - 1e-9) * zutatPreis(id);
+      var rest = restBedarf(id, bedarf[id]);
+      if(rest <= 0) return;
+      s += Math.ceil(rest / ZUTATEN[id].packung - 1e-9) * zutatPreis(id);
     });
     return s * (ORT_FAKTOR[einst.ort] || 1);
   }
@@ -1028,6 +1114,26 @@ nav button.aktiv{color:var(--tuerkis-dunkel);background:var(--tuerkis-hell)}
     zeichnePlan();
   }
 
+  /* Mahlzeit überspringen (zum Beispiel auswärts essen): wird nicht gekocht und nicht gekauft */
+  function ueberspringen(tag, art){
+    var t = plan.tage[tag], nachher = -1;
+    if(art === 'f'){
+      t.sf = true;
+    } else {
+      if(t.rest){ plan.tage[tag - 1].d = false; delete t.rest; }
+      if(t.d){
+        t.d = false;
+        var nx = plan.tage[tag + 1];
+        if(nx && nx.rest){ delete nx.rest; nachher = tag + 1; }
+      }
+      t.sa = true;
+    }
+    planOffen = null;
+    planSpeichern();
+    if(nachher >= 0){ tausche(nachher, 'a'); return; }
+    zeichnePlan();
+  }
+
   /* Reste: heute für zwei Tage kochen, morgen nur aufwärmen */
   function reste(i){
     var t = plan.tage[i], nx = plan.tage[i + 1];
@@ -1037,6 +1143,7 @@ nav button.aktiv{color:var(--tuerkis-dunkel);background:var(--tuerkis-hell)}
       if(nx && nx.rest){ delete nx.rest; planSpeichern(); tausche(i + 1, 'a'); return; }
     } else {
       if(nx.d){ meldung('Der nächste Tag kocht schon für 2 Tage.'); return; }
+      if(nx.sa){ meldung('Der nächste Abend ist übersprungen.'); return; }
       t.d = true; nx.a = t.a; nx.rest = true;
     }
     planOffen = null;
@@ -1087,7 +1194,7 @@ $('plan-neu1').addEventListener('click', function(){ neuerPlan(1); });
       var k = document.createElement('div');
       k.className = 'tagkarte';
       var h = document.createElement('h2');
-      h.textContent = (anzahlTage === 7 ? TAGE[i] : 'Tag ' + (i + 1)) + ' · ca. ' + (kcalVon(rezeptById(t.a).zutaten) + kcalVon(fruehById(t.f).zutaten)) + ' kcal';
+      h.textContent = (anzahlTage === 7 ? TAGE[i] : 'Tag ' + (i + 1)) + ' · ca. ' + ((t.sa ? 0 : kcalVon(rezeptById(t.a).zutaten)) + (t.sf ? 0 : kcalVon(fruehById(t.f).zutaten))) + ' kcal';
       k.appendChild(h);
       [['f', '🥣 Frühstück', fruehById(t.f)], ['a', '🍽️ Abendessen', rezeptById(t.a)]].forEach(function(m){
         var art = m[0], r = m[2];
@@ -1098,6 +1205,24 @@ $('plan-neu1').addEventListener('click', function(){ neuerPlan(1); });
         kopfZeile.className = 'mahl-art';
         kopfZeile.textContent = m[1];
         box.appendChild(kopfZeile);
+        if((art === 'f' && t.sf) || (art === 'a' && t.sa)){
+          var wt = document.createElement('div');
+          wt.className = 'mahl-name';
+          wt.style.cssText = 'color:var(--grau);cursor:default';
+          wt.textContent = '⏭ Übersprungen: nichts gekocht, nichts gekauft';
+          box.appendChild(wt);
+          var wb = document.createElement('button');
+          wb.className = 'knopf tausch';
+          wb.textContent = '↩ Wieder einplanen';
+          wb.addEventListener('click', function(){
+            if(art === 'f') t.sf = false; else t.sa = false;
+            planSpeichern();
+            zeichnePlan();
+          });
+          box.appendChild(wb);
+          k.appendChild(box);
+          return;
+        }
         if(art === 'a') box.appendChild(sternKnopf(r.id));
         var name = document.createElement('button');
         name.className = 'mahl-name' + (art === 'a' ? ' mit-stern' : '');
@@ -1140,11 +1265,22 @@ $('plan-neu1').addEventListener('click', function(){ neuerPlan(1); });
           rb.addEventListener('click', function(){ reste(i); });
           box.appendChild(rb);
         }
+        var tz = document.createElement('div');
+        tz.className = 'zeile';
+        tz.style.marginTop = '10px';
         var tb = document.createElement('button');
         tb.className = 'knopf tausch';
+        tb.style.marginTop = '0';
         tb.textContent = '🔄 Austauschen';
         tb.addEventListener('click', function(){ tausche(i, art); });
-        box.appendChild(tb);
+        tz.appendChild(tb);
+        var sb = document.createElement('button');
+        sb.className = 'knopf tausch';
+        sb.style.marginTop = '0';
+        sb.textContent = '⏭ Überspringen';
+        sb.addEventListener('click', function(){ ueberspringen(i, art); });
+        tz.appendChild(sb);
+        box.appendChild(tz);
         k.appendChild(box);
       });
       tageBox.appendChild(k);
@@ -1170,16 +1306,17 @@ $('plan-neu1').addEventListener('click', function(){ neuerPlan(1); });
   function einkaufListe(){
     var n = einst.personen, bedarf = {};
     plan.tage.forEach(function(t){
-      [[rezeptById(t.a).zutaten, tagFaktor(t)], [fruehById(t.f).zutaten, 1]].forEach(function(p){
+      [[rezeptById(t.a).zutaten, tagFaktor(t)], [fruehById(t.f).zutaten, fruehFaktor(t)]].forEach(function(p){
         if(!p[1]) return;
         p[0].forEach(function(x){ bedarf[x[0]] = (bedarf[x[0]] || 0) + x[1] * n * p[1]; });
       });
     });
     var f = ORT_FAKTOR[einst.ort] || 1;
-    return Object.keys(bedarf).filter(function(id){ return !imVorrat(id); }).map(function(id){
+    return Object.keys(bedarf).filter(function(id){ return restBedarf(id, bedarf[id]) > 0; }).map(function(id){
       var z = ZUTATEN[id];
-      var packs = Math.ceil(bedarf[id] / z.packung - 1e-9);
-      return {id:id, z:z, bedarf:bedarf[id], packs:packs, preis:packs * zutatPreis(id) * f};
+      var rest = restBedarf(id, bedarf[id]);
+      var packs = Math.ceil(rest / z.packung - 1e-9);
+      return {id:id, z:z, bedarf:bedarf[id], rest:rest, packs:packs, preis:packs * zutatPreis(id) * f};
     });
   }
 
@@ -1250,8 +1387,22 @@ $('plan-neu1').addEventListener('click', function(){ neuerPlan(1); });
         z.tabIndex = 0;
         z.innerHTML = '<span class="box">' + (an ? '✓' : '') + '</span><span class="ek-text"><div class="ek-name"></div>' +
           '<div class="ek-sub">Kaufen: ' + kaufText(it.z, it.packs) + ' · Bedarf: ' + bedarfText(it.z, it.bedarf) +
-          '</div></span><span class="ek-preis">ca. ' + euro(it.preis) + '</span>';
+          (it.rest < it.bedarf - 1e-9 ? ' (' + bedarfText(it.z, it.bedarf - it.rest) + ' hast du im Vorrat)' : '') +
+          '</div></span><span class="ek-rechts"><span class="ek-preis">ca. ' + euro(it.preis) + '</span>' +
+          '<button class="daheim" aria-label="Habe ich zu Hause">🏠 Hab ich</button></span>';
         z.querySelector('.ek-name').textContent = it.z.name;
+        var dbtn = z.querySelector('.daheim');
+        dbtn.addEventListener('keydown', function(e){ e.stopPropagation(); });
+        dbtn.addEventListener('click', function(e){
+          e.stopPropagation();
+          if(einst.vorrat.indexOf(it.id) < 0) einst.vorrat.push(it.id);
+          if(einst.vorratMenge) delete einst.vorratMenge[it.id];
+          delete abgehakt[it.id];
+          abgehaktSpeichern();
+          speichern();
+          meldung('🏠 Im Vorrat: ' + it.z.name);
+          zeichneEinkauf();
+        });
         function umschalten(){
           if(abgehakt[it.id]) delete abgehakt[it.id]; else abgehakt[it.id] = true;
           abgehaktSpeichern();
@@ -1259,6 +1410,7 @@ $('plan-neu1').addEventListener('click', function(){ neuerPlan(1); });
         }
         z.addEventListener('click', umschalten);
         z.addEventListener('keydown', function(e){
+          if(e.target !== z) return;
           if(e.key === ' ' || e.key === 'Enter'){ e.preventDefault(); umschalten(); }
         });
         box.appendChild(z);
@@ -1266,6 +1418,56 @@ $('plan-neu1').addEventListener('click', function(){ neuerPlan(1); });
       sec.appendChild(box);
       liste.appendChild(sec);
     });
+
+    /* Was der Plan braucht, aber schon im Vorrat ist: einklappbar, mit „Doch kaufen“ */
+    var daheim = daheimListe();
+    if(daheim.length){
+      var dk = document.createElement('div');
+      dk.className = 'ek-bereich';
+      var dh = document.createElement('button');
+      dh.className = 'knopf gross-knopf';
+      dh.style.cssText = 'margin-top:0;background:var(--blau)';
+      dh.textContent = '🏠 Hab ich zu Hause (' + daheim.length + ') ' + (daheimOffen ? '▲' : '▼');
+      dh.addEventListener('click', function(){ daheimOffen = !daheimOffen; zeichneEinkauf(); });
+      dk.appendChild(dh);
+      if(daheimOffen){
+        var dbox = document.createElement('div');
+        dbox.className = 'ek-eintraege';
+        dbox.style.marginTop = '8px';
+        daheim.forEach(function(it){
+          var z = document.createElement('div');
+          z.className = 'ek-zeile';
+          z.style.cursor = 'default';
+          z.innerHTML = '<span class="ek-text"><div class="ek-name"></div><div class="ek-sub">Bedarf: ' + bedarfText(it.z, it.bedarf) +
+            '</div></span><span class="ek-rechts"><button class="daheim">↩ Doch kaufen</button></span>';
+          z.querySelector('.ek-name').textContent = it.z.name;
+          z.querySelector('.daheim').addEventListener('click', function(){
+            var i = einst.vorrat.indexOf(it.id);
+            if(i >= 0) einst.vorrat.splice(i, 1);
+            if(einst.vorratMenge) delete einst.vorratMenge[it.id];
+            speichern();
+            zeichneEinkauf();
+          });
+          dbox.appendChild(z);
+        });
+        dk.appendChild(dbox);
+      }
+      liste.appendChild(dk);
+    }
+  }
+
+  var daheimOffen = false;
+  function daheimListe(){
+    var n = einst.personen, bedarf = {};
+    plan.tage.forEach(function(t){
+      [[rezeptById(t.a).zutaten, tagFaktor(t)], [fruehById(t.f).zutaten, fruehFaktor(t)]].forEach(function(p){
+        if(!p[1]) return;
+        p[0].forEach(function(x){ bedarf[x[0]] = (bedarf[x[0]] || 0) + x[1] * n * p[1]; });
+      });
+    });
+    return Object.keys(bedarf).filter(function(id){ return imVorrat(id) && restBedarf(id, bedarf[id]) <= 0; })
+      .map(function(id){ return {id:id, z:ZUTATEN[id], bedarf:bedarf[id]}; })
+      .sort(function(a, b){ return a.z.name.localeCompare(b.z.name, 'de'); });
   }
 
   /* ---------- Vorrat ---------- */
@@ -1302,15 +1504,38 @@ $('plan-neu1').addEventListener('click', function(){ neuerPlan(1); });
         if(an){
           z.style.background = '#e2f5e4'; z.style.color = 'var(--text)';
           z.querySelector('.ek-name').style.cssText = 'text-decoration:none;color:var(--text)';
+          var m = einst.vorratMenge && einst.vorratMenge[zt.id];
+          var mw = document.createElement('span');
+          mw.className = 'vo-menge';
+          var inp = document.createElement('input');
+          inp.type = 'number'; inp.min = '0'; inp.step = '1'; inp.inputMode = 'decimal';
+          inp.placeholder = 'reicht';
+          inp.value = (typeof m === 'number') ? m : '';
+          inp.setAttribute('aria-label', 'Menge im Vorrat: ' + zt.name);
+          inp.addEventListener('click', function(e){ e.stopPropagation(); });
+          inp.addEventListener('keydown', function(e){ e.stopPropagation(); });
+          inp.addEventListener('change', function(){
+            if(!einst.vorratMenge) einst.vorratMenge = {};
+            var v = parseFloat(String(inp.value).replace(',', '.'));
+            if(inp.value === '' || isNaN(v) || v < 0){ delete einst.vorratMenge[zt.id]; inp.value = ''; }
+            else einst.vorratMenge[zt.id] = v;
+            speichern();
+          });
+          var einh = document.createElement('span');
+          einh.textContent = zt.einheit === 'Stk' ? 'Stück' : (zt.einheit === 'Zehe' ? 'Zehen' : zt.einheit);
+          mw.appendChild(inp); mw.appendChild(einh);
+          z.appendChild(mw);
         }
         function umschalten(){
           var i = einst.vorrat.indexOf(zt.id);
-          if(i >= 0) einst.vorrat.splice(i, 1); else einst.vorrat.push(zt.id);
+          if(i >= 0){ einst.vorrat.splice(i, 1); if(einst.vorratMenge) delete einst.vorratMenge[zt.id]; }
+          else einst.vorrat.push(zt.id);
           speichern();
           zeichneVorrat();
         }
         z.addEventListener('click', umschalten);
         z.addEventListener('keydown', function(e){
+          if(e.target !== z) return;
           if(e.key === ' ' || e.key === 'Enter'){ e.preventDefault(); umschalten(); }
         });
         box.appendChild(z);
@@ -1340,7 +1565,7 @@ $('plan-neu1').addEventListener('click', function(){ neuerPlan(1); });
   });
   $('vo-leer').addEventListener('click', function(){
     if(!einst.vorrat.length || !window.confirm('Den ganzen Vorrat leeren?')) return;
-    einst.vorrat = [];
+    einst.vorrat = []; einst.vorratMenge = {};
     speichern();
     zeichneVorrat();
   });

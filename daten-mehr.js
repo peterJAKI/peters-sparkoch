@@ -79,3 +79,35 @@ R('Linsen-Bolognese mit Nudeln',30,'schnellkochtopf',['Viel Eiweiß','Günstig']
 R('Thunfisch-Reistopf mit Erbsen',20,'schnellkochtopf',['Viel Eiweiß','Günstig'],
  [['reis',70],['thunfisch',75],['erbsen',60],['dosentomaten',100],['zwiebel',30]],
  ['Zwiebel klein schneiden und mit Reis, Tomaten, Erbsen und etwas Wasser in den Schnellkochtopf geben.','Deckel schließen und 6 Minuten garen.','Druck ablassen, Thunfisch unterrühren und kurz erwärmen.']);
+
+/* ---------- Weitere Frühstücke (hinten anhängen, die Nummern bleiben stabil) ---------- */
+F('Overnight-Oats mit Joghurt und Apfel',['Vollkorn','Sättigend'],
+ [['haferflocken',50],['joghurt',120],['milch',50],['apfel',100]],
+ ['Am Vorabend Haferflocken, Joghurt und Milch verrühren und kalt stellen.','Morgens den Apfel klein schneiden und darübergeben.']);
+F('Spiegelei auf Vollkornbrot mit Tomate',['Viel Eiweiß'],
+ [['eier',2],['vollkornbrot',60],['tomate',60],['oel',3]],
+ ['Öl in der Pfanne erhitzen und die Eier 4 Minuten braten.','Brot mit Tomatenscheiben belegen und die Spiegeleier daraufsetzen.']);
+F('Vollkornbrot mit Paprika-Quark',['Viel Eiweiß','Leicht'],
+ [['vollkornbrot',80],['quark',60],['paprika',0.25]],
+ ['Paprika klein würfeln und unter den Quark rühren.','Auf das Vollkornbrot streichen.']);
+F('Porridge mit Apfel',['Vollkorn','Sättigend'],
+ [['haferflocken',50],['milch',200],['apfel',100]],
+ ['Haferflocken mit Milch 5 Minuten unter Rühren köcheln.','Apfel klein schneiden und darübergeben.']);
+F('Vollkornbrot mit Käse und Tomate',['Vollkorn'],
+ [['vollkornbrot',80],['kaese',30],['tomate',60]],
+ ['Brot mit Käse belegen.','Tomate in Scheiben schneiden und dazulegen.']);
+F('Joghurt mit Banane und Haferflocken',['Leicht','Günstig'],
+ [['joghurt',150],['banane',100],['haferflocken',20]],
+ ['Joghurt in eine Schale geben.','Banane in Scheiben schneiden und mit Haferflocken darübergeben.']);
+F('Käse-Omelett mit Vollkornbrot',['Viel Eiweiß'],
+ [['eier',2],['kaese',20],['vollkornbrot',60],['oel',3]],
+ ['Eier verquirlen und in Öl 4 Minuten in der Pfanne stocken lassen.','Käse darüberstreuen und zusammenklappen.','Mit Vollkornbrot servieren.']);
+F('Vollkornbrot mit Joghurt-Gurken-Dip',['Leicht','Günstig'],
+ [['vollkornbrot',80],['joghurt',60],['gurke',0.25]],
+ ['Gurke klein würfeln und mit Joghurt und Salz verrühren.','Auf dem Vollkornbrot servieren.']);
+F('Rührei mit Zwiebel und Tomate',['Viel Eiweiß'],
+ [['eier',2],['tomate',60],['zwiebel',20],['vollkornbrot',40],['oel',3]],
+ ['Zwiebel klein schneiden und in Öl 2 Minuten braten.','Tomate würfeln dazugeben, Eier verquirlen und 4 Minuten stocken lassen.','Mit Vollkornbrot servieren.']);
+F('Apfel-Haferflocken-Pfannkuchen',['Vollkorn','Sättigend'],
+ [['haferflocken',40],['eier',1],['milch',80],['apfel',100],['oel',3]],
+ ['Haferflocken, Ei und Milch zu einem Teig verrühren.','Apfel raspeln und unterrühren.','In Öl von jeder Seite 3 Minuten braten.']);
