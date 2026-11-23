@@ -318,6 +318,12 @@ nav button.aktiv{color:var(--tuerkis-dunkel);background:var(--tuerkis-hell)}
     </div>
 
     <div class="karte">
+      <h2>🥔 Im Plan erlaubt</h2>
+      <div id="plan-erlaubt"></div>
+      <p class="hinweis">Gilt für den automatischen Plan. In „Rezepte“ siehst du immer alle Gerichte.</p>
+    </div>
+
+    <div class="karte">
       <h2>🚫 Abneigungen</h2>
       <div class="zeile">
         <input type="text" id="abneigung-neu" placeholder="z. B. Pilze" autocomplete="off" aria-label="Zutat, die ich nicht mag">
@@ -345,7 +351,7 @@ nav button.aktiv{color:var(--tuerkis-dunkel);background:var(--tuerkis-hell)}
       <input type="file" id="laden-datei" accept=".json,application/json" hidden>
     </div>
 
-    <p class="stand">Peters Sparkoch · Version 2.6</p>
+    <p class="stand">Peters Sparkoch · Version 2.7</p>
   </section>
 
   <!-- ANLEITUNG -->
@@ -419,7 +425,8 @@ nav button.aktiv{color:var(--tuerkis-dunkel);background:var(--tuerkis-hell)}
     <div class="karte">
       <h2>6. Rezepte 🍽️</h2>
       <ul>
-        <li>Alle Abendessen mit Filtern: Favoriten, Aus meinem Vorrat kochen, Zeit, Gerät (Herd, Backofen, Heißluftfritteuse, Schnellkochtopf) und Art (Fleisch, Fisch, vegetarisch).</li>
+        <li>Alle Abendessen mit Filtern: Favoriten, Art des Gerichts (<b>🥔 Deftig &amp; Hausmannskost</b> oder <b>🎄 Festtagsessen</b> wie Schweinebraten mit Knödeln und Rotkohl), Aus meinem Vorrat kochen, Zeit (bis 90 Minuten), Gerät (Herd, Backofen, Heißluftfritteuse, Schnellkochtopf) und Art (Fleisch, Fisch, vegetarisch).</li>
+        <li>Deftiges und Festtagsessen erscheint im automatischen Plan nur, wenn du es in den Einstellungen unter <b>„🥔 Im Plan erlaubt“</b> erlaubst. Festtagsessen ist dort standardmäßig aus.</li>
         <li><b>Portionen − / +:</b> Im geöffneten Rezept stellst du die Portionen ein. Koch mehr, dann hast du morgen Reste.</li>
       </ul>
     </div>
@@ -463,6 +470,7 @@ nav button.aktiv{color:var(--tuerkis-dunkel);background:var(--tuerkis-hell)}
 
 <script src="daten.js"></script>
 <script src="daten-mehr.js"></script>
+<script src="daten-deftig.js"></script>
 <script src="kalorien.js"></script>
 <script>
 (function(){
@@ -492,7 +500,9 @@ nav button.aktiv{color:var(--tuerkis-dunkel);background:var(--tuerkis-hell)}
     geraete: ['herd'],
     abneigungen: [],
     vorrat: [],
-    favoriten: []
+    favoriten: [],
+    planDeftig: true,
+    planFest: false
   };
 
   var einst = laden();
@@ -501,12 +511,20 @@ nav button.aktiv{color:var(--tuerkis-dunkel);background:var(--tuerkis-hell)}
   /* Grundzutaten (Öl, Brühe, Gewürze usw.) hat man normalerweise zu Hause: einmalig in den Vorrat legen */
   function basisEinsetzen(e){
     e.vorrat = (e.vorrat || []).slice();
-    if(!e.basisGesetzt){
-      Object.keys(ZUTATEN).forEach(function(id){
-        if(ZUTATEN[id].bereich === 'sonstiges' && e.vorrat.indexOf(id) < 0) e.vorrat.push(id);
-      });
-      e.basisGesetzt = true;
+    /* basisIds merkt sich, welche Grundzutaten schon einmal in den Vorrat gelegt wurden.
+       Neue Grundzutaten kommen einmal dazu, abgewählte bleiben abgewählt. */
+    if(!e.basisIds){
+      e.basisIds = e.basisGesetzt
+        ? ['oel','bruehe','sojasauce','essig','senf','salz','pfeffer','paprikapulver','curry','kraeuter']
+        : [];
     }
+    e.basisIds = e.basisIds.slice();
+    Object.keys(ZUTATEN).forEach(function(id){
+      if(ZUTATEN[id].bereich !== 'sonstiges' || e.basisIds.indexOf(id) >= 0) return;
+      e.basisIds.push(id);
+      if(e.vorrat.indexOf(id) < 0) e.vorrat.push(id);
+    });
+    e.basisGesetzt = true;
     return e;
   }
   function ladenRoh(){
@@ -712,6 +730,37 @@ nav button.aktiv{color:var(--tuerkis-dunkel);background:var(--tuerkis-hell)}
     });
   }
 
+  /* ---------- Im Plan erlaubt (Deftiges, Festtagsessen) ---------- */
+  function zeichnePlanErlaubt(){
+    var box = $('plan-erlaubt');
+    box.innerHTML = '';
+    [['planDeftig', '🥔 Deftiges und Hausmannskost (bis 90 Min.)', einst.planDeftig !== false],
+     ['planFest', '🎄 Festtagsessen (Braten, Rouladen …)', einst.planFest === true]].forEach(function(o){
+      var d = document.createElement('div');
+      d.className = 'haken' + (o[2] ? ' an' : '');
+      d.setAttribute('role', 'checkbox');
+      d.setAttribute('aria-checked', o[2]);
+      d.tabIndex = 0;
+      var bx = document.createElement('span');
+      bx.className = 'box';
+      bx.textContent = o[2] ? '✓' : '';
+      var tx = document.createElement('span');
+      tx.textContent = o[1];
+      d.appendChild(bx);
+      d.appendChild(tx);
+      function umschalten(){
+        einst[o[0]] = !o[2];
+        zeichnePlanErlaubt();
+        speichern();
+      }
+      d.addEventListener('click', umschalten);
+      d.addEventListener('keydown', function(e){
+        if(e.key === ' ' || e.key === 'Enter'){ e.preventDefault(); umschalten(); }
+      });
+      box.appendChild(d);
+    });
+  }
+
   /* ---------- Abneigungen ---------- */
   function zeichneAbneigungen(){
     var box = $('abneigungen');
@@ -785,7 +834,7 @@ nav button.aktiv{color:var(--tuerkis-dunkel);background:var(--tuerkis-hell)}
 
   /* ---------- Rezepte-Seite ---------- */
   var ART_NAME = {fleisch:'🍗 Fleisch', fisch:'🐟 Fisch', vegetarisch:'🥦 Vegetarisch'};
-  var rf = {zeit:0, geraet:'', art:'', passend:true, fav:false, vorrat:'', offen:null};
+  var rf = {zeit:0, geraet:'', art:'', passend:true, fav:false, vorrat:'', kat:'', offen:null};
   function fehlendeZutaten(r){
     /* Öl, Brühe, Gewürze usw. (Bereich „Sonstiges“) zählen hier nicht als fehlend */
     return r.zutaten.filter(function(x){ return ZUTATEN[x[0]].bereich !== 'sonstiges' && !imVorrat(x[0]); })
@@ -802,6 +851,13 @@ nav button.aktiv{color:var(--tuerkis-dunkel);background:var(--tuerkis-hell)}
   }
 
   function rezeptPasst(r){ return rezeptPasstMit(r, false); }
+  /* Für den automatischen Plan: Deftiges und Festtagsessen nur, wenn in den Einstellungen erlaubt */
+  function planPasst(r){
+    if(!rezeptPasst(r)) return false;
+    if(r.kat === 'deftig' && einst.planDeftig === false) return false;
+    if(r.kat === 'fest' && einst.planFest !== true) return false;
+    return true;
+  }
   /* ohneGeraet = true: Geräte aus den Einstellungen ignorieren (wenn man im Filter selbst ein Gerät wählt) */
   function rezeptPasstMit(r, ohneGeraet){
     if(!ohneGeraet && einst.geraete.indexOf(r.geraet) < 0) return false;
@@ -879,7 +935,8 @@ nav button.aktiv{color:var(--tuerkis-dunkel);background:var(--tuerkis-hell)}
     box.innerHTML = '';
     chipGruppe(box, 'Favoriten', 'fav', [[false,'Alle Rezepte'],[true,'★ Nur meine Favoriten']]);
     chipGruppe(box, '🥫 Aus meinem Vorrat kochen', 'vorrat', [['','Egal'],['fast','Fast alles (max. 2 fehlen)'],['alles','✓ Alles im Vorrat']]);
-    chipGruppe(box, 'Zeit', 'zeit', [[0,'Alle'],[30,'bis 30 Min.'],[45,'bis 45 Min.'],[60,'bis 60 Min.']]);
+    chipGruppe(box, 'Art des Gerichts', 'kat', [['','Alle'],['deftig','🥔 Deftig & Hausmannskost'],['fest','🎄 Festtagsessen']]);
+    chipGruppe(box, 'Zeit', 'zeit', [[0,'Alle'],[30,'bis 30 Min.'],[45,'bis 45 Min.'],[60,'bis 60 Min.'],[90,'bis 90 Min.']]);
     var gOpt = [['','Alle']];
     GERAETE.forEach(function(g){ gOpt.push([g.id, g.icon + ' ' + g.name]); });
     chipGruppe(box, 'Gerät', 'geraet', gOpt);
@@ -891,6 +948,7 @@ nav button.aktiv{color:var(--tuerkis-dunkel);background:var(--tuerkis-hell)}
       if(rf.geraet && r.geraet !== rf.geraet) return false;
       if(rf.art && r.art !== rf.art) return false;
       if(rf.fav && !istFavorit(r.id)) return false;
+      if(rf.kat && r.kat !== rf.kat) return false;
       if(rf.passend && !rf.fav && !rezeptPasstMit(r, !!rf.geraet)) return false;
       return true;
     });
@@ -1045,7 +1103,7 @@ nav button.aktiv{color:var(--tuerkis-dunkel);background:var(--tuerkis-hell)}
   function budgetFuer(tageAnzahl){ return tageAnzahl === 1 ? einst.budget1 : (tageAnzahl === 3 ? einst.budget3 : einst.budget); }
 
   function erzeugePlan(anzahl){
-    var pool = REZEPTE.filter(rezeptPasst);
+    var pool = REZEPTE.filter(planPasst);
     if(!pool.length) return null;
     var maxFleisch = Math.ceil((einst.ernaehrung === 'fleisch' ? 5 : (einst.ernaehrung === 'gemischt' ? 4 : 0)) * anzahl / 7);
     var bestIn = null, bestInWert = -Infinity, bestOut = null, bestOutKosten = Infinity;
@@ -1093,7 +1151,7 @@ nav button.aktiv{color:var(--tuerkis-dunkel);background:var(--tuerkis-hell)}
       }
     }
     var aktuell = plan.tage[tag][art];
-    var pool = art === 'a' ? REZEPTE.filter(rezeptPasst) : FRUEHSTUECK;
+    var pool = art === 'a' ? REZEPTE.filter(planPasst) : FRUEHSTUECK;
     var benutzt = plan.tage.map(function(t){ return t[art]; });
     var kand = pool.filter(function(r){ return benutzt.indexOf(r.id) < 0; });
     if(!kand.length) kand = pool.filter(function(r){ return r.id !== aktuell; });
@@ -1823,6 +1881,7 @@ $('plan-neu1').addEventListener('click', function(){ neuerPlan(1); });
   zeichnePersonen();
   zeichneGeraete();
   zeichneAbneigungen();
+  zeichnePlanErlaubt();
   var start = 'plan';
   try{ start = localStorage.getItem(SEITE_KEY) || 'plan'; }catch(x){}
   zeigeSeite(start);

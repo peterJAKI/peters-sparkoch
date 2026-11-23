@@ -15,6 +15,13 @@ var KCAL = {
   oel:880, bruehe:10, sojasauce:60, essig:20, senf:80, salz:0, pfeffer:250, paprikapulver:280, curry:300, kraeuter:250
 };
 
+/* Weitere Zutaten (deftige Gerichte, Festtagsessen) */
+KCAL.schweinebraten = 230; KCAL.schweineschnitzel = 110; KCAL.rindergulasch = 130; KCAL.rinderrouladen = 140;
+KCAL.kassler = 150; KCAL.bratwurst = 250; KCAL.wuerstchen = 85; KCAL.entenkeule = 330; KCAL.brathaehnchen = 1300;
+KCAL.rotkohl = 55; KCAL.sauerkraut = 20; KCAL.weisskohl = 25; KCAL.knoedel = 150; KCAL.spaetzle = 150;
+KCAL.semmelbroesel = 360; KCAL.sahne = 300; KCAL.preiselbeeren = 150; KCAL.tellerlinsen = 330; KCAL.gelbeerbsen = 340;
+KCAL.weisse_bohnen = 90; KCAL.graupen = 350; KCAL.majoran = 270; KCAL.muskat = 500; KCAL.zucker = 400;
+
 /* Kalorien einer Portion (ungefähr, auf 5 gerundet) */
 function kcalVon(zutaten, portionen){
   var s = 0;
