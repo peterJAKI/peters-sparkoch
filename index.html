@@ -173,6 +173,8 @@ nav button.aktiv{color:var(--tuerkis-dunkel);background:var(--tuerkis-hell)}
 .portionen{display:flex;align-items:center;gap:14px;margin-top:14px;font-weight:800;font-size:20px}
 .portionen b{font-size:28px;min-width:36px;text-align:center;color:var(--blau)}
 .portionen .knopf{width:56px;font-size:28px;padding:6px}
+.fehlt{margin-top:8px;font-weight:700;font-size:16px;color:var(--grau)}
+.fehlt.ok{color:var(--tuerkis-dunkel)}
 .rez,.mahl{position:relative}
 .rez-kopf{padding-right:68px}
 .mahl-name.mit-stern{padding-right:56px}
@@ -236,6 +238,7 @@ nav button.aktiv{color:var(--tuerkis-dunkel);background:var(--tuerkis-hell)}
         <button class="knopf gold" id="vo-basis">⭐ Grundausstattung</button>
         <button class="knopf" id="vo-leer">↺ Alles leeren</button>
       </div>
+      <button class="knopf gross-knopf" id="vo-kochen" style="background:var(--blau)">🍳 Was kann ich damit kochen?</button>
       <p class="hinweis" id="vo-anzahl"></p>
     </div>
     <div id="vo-liste"></div>
@@ -307,7 +310,7 @@ nav button.aktiv{color:var(--tuerkis-dunkel);background:var(--tuerkis-hell)}
       </div>
     </div>
 
-    <p class="stand">Peters Sparkoch · Version 1.5</p>
+    <p class="stand">Peters Sparkoch · Version 1.6</p>
   </section>
 </main>
 
@@ -547,7 +550,10 @@ nav button.aktiv{color:var(--tuerkis-dunkel);background:var(--tuerkis-hell)}
 
   /* ---------- Rezepte-Seite ---------- */
   var ART_NAME = {fleisch:'🍗 Fleisch', fisch:'🐟 Fisch', vegetarisch:'🥦 Vegetarisch'};
-  var rf = {zeit:0, geraet:'', art:'', passend:true, fav:false, offen:null};
+  var rf = {zeit:0, geraet:'', art:'', passend:true, fav:false, vorrat:'', offen:null};
+  function fehlendeZutaten(r){
+    return r.zutaten.filter(function(x){ return !imVorrat(x[0]); }).map(function(x){ return ZUTATEN[x[0]].name; });
+  }
 
   function geraetInfo(id){
     for(var i = 0; i < GERAETE.length; i++) if(GERAETE[i].id === id) return GERAETE[i];
@@ -579,6 +585,12 @@ nav button.aktiv{color:var(--tuerkis-dunkel);background:var(--tuerkis-hell)}
     return b;
   }
 
+  function vorratZeile(r){
+    if(!(einst.vorrat || []).length) return '';
+    var fe = fehlendeZutaten(r);
+    return '<div class="fehlt' + (fe.length ? '' : ' ok') + '">' +
+      (fe.length ? 'Fehlt: ' + fe.slice(0, 4).join(', ') + (fe.length > 4 ? ' …' : '') : '✓ Alles im Vorrat') + '</div>';
+  }
   var portionen = null; /* null = Personenzahl aus den Einstellungen */
   function detailHtml(r, nStandard){
     var n = portionen || nStandard || einst.personen;
@@ -624,6 +636,7 @@ nav button.aktiv{color:var(--tuerkis-dunkel);background:var(--tuerkis-hell)}
     var box = $('rez-filter');
     box.innerHTML = '';
     chipGruppe(box, 'Favoriten', 'fav', [[false,'Alle Rezepte'],[true,'★ Nur meine Favoriten']]);
+    chipGruppe(box, '🥫 Aus meinem Vorrat kochen', 'vorrat', [['','Egal'],['alles','✓ Alles im Vorrat'],['fast','Fast alles (max. 2 fehlen)']]);
     chipGruppe(box, 'Zeit', 'zeit', [[0,'Alle'],[30,'bis 30 Min.'],[45,'bis 45 Min.'],[60,'bis 60 Min.']]);
     var gOpt = [['','Alle']];
     GERAETE.forEach(function(g){ gOpt.push([g.id, g.icon + ' ' + g.name]); });
@@ -636,9 +649,19 @@ nav button.aktiv{color:var(--tuerkis-dunkel);background:var(--tuerkis-hell)}
       if(rf.geraet && r.geraet !== rf.geraet) return false;
       if(rf.art && r.art !== rf.art) return false;
       if(rf.fav && !istFavorit(r.id)) return false;
+      if(rf.vorrat){
+        var fe = fehlendeZutaten(r).length;
+        if(rf.vorrat === 'alles' && fe > 0) return false;
+        if(rf.vorrat === 'fast' && fe > 2) return false;
+      }
       if(rf.passend && !rf.fav && !rezeptPasstMit(r, !!rf.geraet)) return false;
       return true;
     });
+    if(rf.vorrat){
+      liste = liste.map(function(r, i){ return {r:r, i:i, f:fehlendeZutaten(r).length}; })
+        .sort(function(a, b){ return a.f - b.f || a.i - b.i; })
+        .map(function(o){ return o.r; });
+    }
     $('rez-anzahl').textContent = liste.length + ' von ' + REZEPTE.length + ' Rezepten';
 
     var out = $('rez-liste');
@@ -646,7 +669,11 @@ nav button.aktiv{color:var(--tuerkis-dunkel);background:var(--tuerkis-hell)}
     if(!liste.length){
       var l = document.createElement('div');
       l.className = 'karte leer';
-      l.innerHTML = rf.fav && !(einst.favoriten || []).length
+      l.innerHTML = rf.vorrat && !(einst.vorrat || []).length
+        ? '<div class="gross">🥫</div><p>Dein Vorrat ist noch leer.<br>Trage unter „Vorrat“ ein, was du zu Hause hast.</p>'
+        : rf.vorrat
+        ? '<div class="gross">🥫</div><p>Kein Rezept nur aus deinem Vorrat.<br>' + (rf.vorrat === 'alles' ? 'Probiere „Fast alles“ oder trage mehr Zutaten ein.' : 'Trage mehr Zutaten im Vorrat ein.') + '</p>'
+        : rf.fav && !(einst.favoriten || []).length
         ? '<div class="gross">☆</div><p>Noch keine Favoriten.<br>Tippe bei einem Rezept auf den Stern.</p>'
         : '<div class="gross">🔍</div><p>Kein Rezept gefunden.<br>Probiere einen anderen Filter oder „Alle zeigen“.</p>';
       out.appendChild(l);
@@ -664,7 +691,8 @@ nav button.aktiv{color:var(--tuerkis-dunkel);background:var(--tuerkis-hell)}
         '<div class="rez-name"></div>' +
         '<div class="rez-info"><span>⏱ ' + r.zeit + ' Min.</span><span>' + g.icon + ' ' + g.name +
         '</span><span>' + ART_NAME[r.art] + '</span><span>🔥 ca. ' + kcalVon(r.zutaten) + ' kcal</span><span class="rez-preis">' + 'ca. ' + euro(pp) + ' pro Portion</span></div>' +
-        '<div class="badges">' + r.badges.map(function(b){ return '<span class="badge">' + b + '</span>'; }).join('') + '</div>';
+        '<div class="badges">' + r.badges.map(function(b){ return '<span class="badge">' + b + '</span>'; }).join('') + '</div>' +
+        vorratZeile(r);
       kopf.querySelector('.rez-name').textContent = r.name;
       kopf.addEventListener('click', function(){
         rf.offen = (rf.offen === r.id) ? null : r.id;
@@ -1113,6 +1141,11 @@ nav button.aktiv{color:var(--tuerkis-dunkel);background:var(--tuerkis-hell)}
     BASIS.forEach(function(id){ if(einst.vorrat.indexOf(id) < 0) einst.vorrat.push(id); });
     speichern();
     zeichneVorrat();
+  });
+  $('vo-kochen').addEventListener('click', function(){
+    if(!einst.vorrat.length){ meldung('Trage zuerst ein, was du hast.'); return; }
+    rf.vorrat = 'alles'; rf.fav = false; rf.zeit = 0; rf.geraet = ''; rf.art = ''; rf.offen = null;
+    zeigeSeite('rezepte');
   });
   $('vo-leer').addEventListener('click', function(){
     if(!einst.vorrat.length || !window.confirm('Den ganzen Vorrat leeren?')) return;

@@ -1,6 +1,6 @@
 // Peters Sparkoch – Service Worker (Offline-Betrieb)
 // Bei jeder Änderung an den Dateien die Versionsnummer erhöhen!
-var VERSION = 'sparkoch-v12';
+var VERSION = 'sparkoch-v13';
 var DATEIEN = [
   './',
   './index.html',
