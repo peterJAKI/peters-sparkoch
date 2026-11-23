@@ -198,10 +198,10 @@ nav button.aktiv{color:var(--tuerkis-dunkel);background:var(--tuerkis-hell)}
 .ek-name{font-weight:800;font-size:21px}
 .ek-sub{color:var(--grau);font-size:16px}
 .ek-preis{font-weight:800;color:var(--tuerkis-dunkel);white-space:nowrap}
-.ek-zeile.erledigt{background:#eef2f3;color:#98a6ab}
-.ek-zeile.erledigt .ek-name{text-decoration:line-through;color:#98a6ab}
-.ek-zeile.erledigt .ek-sub,.ek-zeile.erledigt .ek-preis{color:#98a6ab}
-.ek-zeile.erledigt .box{background:var(--gold);border-color:var(--gold);color:var(--text)}
+.ek-zeile.erledigt{background:#e2f5e4;color:#2f6b3c}
+.ek-zeile.erledigt .ek-name{text-decoration:line-through;color:#2f6b3c}
+.ek-zeile.erledigt .ek-sub,.ek-zeile.erledigt .ek-preis{color:#4f8a5b}
+.ek-zeile.erledigt .box{background:#2e9e4f;border-color:#2e9e4f;color:#fff}
 </style>
 </head>
 <body>
@@ -319,7 +319,7 @@ nav button.aktiv{color:var(--tuerkis-dunkel);background:var(--tuerkis-hell)}
       </div>
     </div>
 
-    <p class="stand">Peters Sparkoch · Version 2.1</p>
+    <p class="stand">Peters Sparkoch · Version 2.2</p>
   </section>
 </main>
 
@@ -1169,7 +1169,7 @@ nav button.aktiv{color:var(--tuerkis-dunkel);background:var(--tuerkis-hell)}
         z.innerHTML = '<span class="box">' + (an ? '✓' : '') + '</span><span class="ek-text"><div class="ek-name"></div></span>';
         z.querySelector('.ek-name').textContent = zt.name;
         if(an){
-          z.style.background = 'var(--gold-hell)'; z.style.color = 'var(--text)';
+          z.style.background = '#e2f5e4'; z.style.color = 'var(--text)';
           z.querySelector('.ek-name').style.cssText = 'text-decoration:none;color:var(--text)';
         }
         function umschalten(){
