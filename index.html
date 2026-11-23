@@ -257,6 +257,15 @@ nav button.aktiv{color:var(--tuerkis-dunkel);background:var(--tuerkis-hell)}
     </div>
 
     <div class="karte">
+      <h2>💶 Budget für 3 Tage</h2>
+      <div class="zeile">
+        <input type="number" id="budget3" inputmode="decimal" min="0" step="1" aria-label="Budget für den 3-Tage-Plan in Euro">
+        <div style="flex:0 0 auto;font-size:26px;font-weight:800">€</div>
+      </div>
+      <p class="hinweis">Gilt nur für den 3-Tage-Plan. Das Wochen-Budget oben bleibt für den Wochenplan.</p>
+    </div>
+
+    <div class="karte">
       <h2>👥 Anzahl Personen</h2>
       <div class="stepper">
         <button class="knopf" id="personen-minus" aria-label="Weniger Personen">−</button>
@@ -310,7 +319,7 @@ nav button.aktiv{color:var(--tuerkis-dunkel);background:var(--tuerkis-hell)}
       </div>
     </div>
 
-    <p class="stand">Peters Sparkoch · Version 1.8</p>
+    <p class="stand">Peters Sparkoch · Version 2.1</p>
   </section>
 </main>
 
@@ -349,6 +358,7 @@ nav button.aktiv{color:var(--tuerkis-dunkel);background:var(--tuerkis-hell)}
 
   var STANDARD = {
     budget: 50,
+    budget3: 20,
     personen: 1,
     ort: 'discounter',
     ernaehrung: 'gemischt',
@@ -426,6 +436,16 @@ nav button.aktiv{color:var(--tuerkis-dunkel);background:var(--tuerkis-hell)}
     var v = parseFloat(String(budgetFeld.value).replace(',', '.'));
     if(isNaN(v) || v < 0) return;
     einst.budget = Math.round(v * 100) / 100;
+    speichern();
+  });
+
+  /* ---------- Budget für 3 Tage ---------- */
+  var budget3Feld = $('budget3');
+  budget3Feld.value = einst.budget3;
+  budget3Feld.addEventListener('input', function(){
+    var v = parseFloat(String(budget3Feld.value).replace(',', '.'));
+    if(isNaN(v) || v < 0) return;
+    einst.budget3 = Math.round(v * 100) / 100;
     speichern();
   });
 
@@ -745,7 +765,7 @@ nav button.aktiv{color:var(--tuerkis-dunkel);background:var(--tuerkis-hell)}
   function ladePlan(){
     try{
       var p = JSON.parse(localStorage.getItem(PLAN_KEY));
-      if(p && p.tage && p.tage.length === 7 && p.tage.every(function(t){
+      if(p && p.tage && (p.tage.length === 7 || p.tage.length === 3) && p.tage.every(function(t){
         return rezeptById(t.a) && fruehById(t.f);
       })) return p;
     }catch(x){}
@@ -805,22 +825,25 @@ nav button.aktiv{color:var(--tuerkis-dunkel);background:var(--tuerkis-hell)}
     var vorratGenutzt = Object.keys(zaehler).filter(imVorrat).length;
     var wert = Object.keys(arten).length + Object.keys(geraete).length + wiederverwendet * 0.3 + vorratGenutzt * 0.4;
     if(einst.ernaehrung === 'fleisch') wert += nichtVeg * 0.5;
-    if(einst.ernaehrung === 'gemischt') wert -= Math.abs(nichtVeg - 3) * 0.7;
+    if(einst.ernaehrung === 'gemischt') wert -= Math.abs(nichtVeg - Math.round(3 * tage.length / 7)) * 0.7;
     return {wert: wert, nichtVeg: nichtVeg};
   }
 
-  function erzeugePlan(){
+  /* Wochenplan: Wochen-Budget. 3-Tage-Plan: eigenes Budget für 3 Tage. */
+  function budgetFuer(tageAnzahl){ return tageAnzahl === 3 ? einst.budget3 : einst.budget; }
+
+  function erzeugePlan(anzahl){
     var pool = REZEPTE.filter(rezeptPasst);
     if(!pool.length) return null;
-    var maxFleisch = einst.ernaehrung === 'fleisch' ? 5 : (einst.ernaehrung === 'gemischt' ? 4 : 0);
+    var maxFleisch = Math.ceil((einst.ernaehrung === 'fleisch' ? 5 : (einst.ernaehrung === 'gemischt' ? 4 : 0)) * anzahl / 7);
     var bestIn = null, bestInWert = -Infinity, bestOut = null, bestOutKosten = Infinity;
-    for(var v = 0; v < 500; v++){
-      var abende = ziehe(pool, 7), fruehs = ziehe(FRUEHSTUECK, 7);
+    for(var v = 0; v < 1500; v++){
+      var abende = ziehe(pool, anzahl), fruehs = ziehe(FRUEHSTUECK, anzahl);
       var tage = abende.map(function(r, i){ return {a:r.id, f:fruehs[i].id}; });
       var b = planBewertung(tage);
       if(b.nichtVeg > maxFleisch) continue;
       var k = planKosten(tage);
-      if(k <= einst.budget){
+      if(k <= budgetFuer(anzahl)){
         var w = b.wert - k * 0.02;
         if(w > bestInWert){ bestInWert = w; bestIn = tage; }
       } else if(k < bestOutKosten){
@@ -831,9 +854,10 @@ nav button.aktiv{color:var(--tuerkis-dunkel);background:var(--tuerkis-hell)}
     return tage2 ? {tage: tage2} : null;
   }
 
-  function neuerPlan(){
+  function neuerPlan(anzahl){
+    anzahl = anzahl === 3 ? 3 : 7;
     if(plan && !window.confirm('Neuen Plan erstellen? Der alte Plan wird ersetzt.')) return;
-    var p = erzeugePlan();
+    var p = erzeugePlan(anzahl);
     if(!p){
       meldung('Keine passenden Rezepte. Bitte Geräte oder Abneigungen prüfen.');
       return;
@@ -868,7 +892,7 @@ nav button.aktiv{color:var(--tuerkis-dunkel);background:var(--tuerkis-hell)}
       kopie[tag][art] = r.id;
       var k = planKosten(kopie);
       var v = r.zutaten.filter(function(x){ return imVorrat(x[0]) && ZUTATEN[x[0]].bereich !== 'sonstiges'; }).length;
-      if(k <= einst.budget && v > okV){ ok = r; okV = v; }
+      if(k <= budgetFuer(plan.tage.length) && v > okV){ ok = r; okV = v; }
       if(k < bestK){ bestK = k; best = r; }
     });
     plan.tage[tag][art] = (ok || best).id;
@@ -881,6 +905,7 @@ nav button.aktiv{color:var(--tuerkis-dunkel);background:var(--tuerkis-hell)}
   /* Reste: heute für zwei Tage kochen, morgen nur aufwärmen */
   function reste(i){
     var t = plan.tage[i], nx = plan.tage[i + 1];
+    if(!nx) return;
     if(t.d){
       t.d = false;
       if(nx && nx.rest){ delete nx.rest; planSpeichern(); tausche(i + 1, 'a'); return; }
@@ -898,16 +923,20 @@ nav button.aktiv{color:var(--tuerkis-dunkel);background:var(--tuerkis-hell)}
     kopf.innerHTML = ''; tageBox.innerHTML = '';
 
     if(!plan){
-      kopf.innerHTML = '<div class="karte leer"><div class="gross">📅</div><h2>Dein Wochenplan</h2>' +
-        '<p>Mit einem Knopfdruck: 7 Tage Frühstück und Abendessen, passend zu deinem Budget von ' +
-        euro(einst.budget) + '.</p><button class="knopf gold gross-knopf" id="plan-neu">✨ Wochenplan erstellen</button></div>';
-      $('plan-neu').addEventListener('click', neuerPlan);
+      kopf.innerHTML = '<div class="karte leer"><div class="gross">📅</div><h2>Dein Plan</h2>' +
+        '<p>Mit einem Knopfdruck: Frühstück und Abendessen, passend zu deinem Budget (Woche: ' +
+        euro(einst.budget) + ', 3 Tage: ' + euro(einst.budget3) + ').</p><button class="knopf gold gross-knopf" id="plan-neu7">✨ Wochenplan (7 Tage)</button>' +
+        '<button class="knopf gross-knopf" id="plan-neu3">✨ Nur 3 Tage</button></div>';
+      $('plan-neu7').addEventListener('click', function(){ neuerPlan(7); });
+      $('plan-neu3').addEventListener('click', function(){ neuerPlan(3); });
       return;
     }
 
+    var anzahlTage = plan.tage.length;
+    var budget = budgetFuer(anzahlTage);
     var kosten = planKosten(plan.tage);
-    var rest = einst.budget - kosten;
-    var pct = einst.budget > 0 ? Math.min(100, kosten / einst.budget * 100) : 100;
+    var rest = budget - kosten;
+    var pct = budget > 0 ? Math.min(100, kosten / budget * 100) : 100;
     var drueber = rest < 0;
     var n = einst.personen;
     kopf.innerHTML =
@@ -916,16 +945,18 @@ nav button.aktiv{color:var(--tuerkis-dunkel);background:var(--tuerkis-hell)}
       '<span style="text-align:right">' + (drueber ? 'Über Budget' : 'Übrig') + '<br><b class="' + (drueber ? 'ueber' : '') + '">' +
       'ca. ' + euro(Math.abs(rest)) + '</b></span></div>' +
       '<div class="bar"><div class="fuell' + (drueber ? ' drueber' : '') + '" style="width:' + pct + '%"></div></div>' +
-      '<p class="hinweis">Budget ' + euro(einst.budget) + ' · ' + n + (n === 1 ? ' Person' : ' Personen') + ' · ' +
+      '<p class="hinweis">Budget ' + euro(budget) + (anzahlTage === 7 ? ' pro Woche' : ' für ' + anzahlTage + ' Tage') + ' · ' + n + (n === 1 ? ' Person' : ' Personen') + ' · ' +
       (einst.ort === 'discounter' ? 'Discounter' : 'Supermarkt') + '<br>Alle Preise sind ungefähre Werte (ca.).<br>Kalorien pro Person, nur Frühstück + Abendessen.</p></div>' +
-      '<button class="knopf gold gross-knopf" id="plan-neu" style="margin:0 0 16px">🔄 Neuen Plan erstellen</button>';
-    $('plan-neu').addEventListener('click', neuerPlan);
+      '<div class="zeile" style="margin-bottom:16px"><button class="knopf gold" id="plan-neu7">🔄 Neuer Wochenplan</button>' +
+      '<button class="knopf" id="plan-neu3">🔄 Neuer 3-Tage-Plan</button></div>';
+    $('plan-neu7').addEventListener('click', function(){ neuerPlan(7); });
+    $('plan-neu3').addEventListener('click', function(){ neuerPlan(3); });
 
     plan.tage.forEach(function(t, i){
       var k = document.createElement('div');
       k.className = 'tagkarte';
       var h = document.createElement('h2');
-      h.textContent = TAGE[i] + ' · ca. ' + (kcalVon(rezeptById(t.a).zutaten) + kcalVon(fruehById(t.f).zutaten)) + ' kcal';
+      h.textContent = (anzahlTage === 7 ? TAGE[i] : 'Tag ' + (i + 1)) + ' · ca. ' + (kcalVon(rezeptById(t.a).zutaten) + kcalVon(fruehById(t.f).zutaten)) + ' kcal';
       k.appendChild(h);
       [['f', '🥣 Frühstück', fruehById(t.f)], ['a', '🍽️ Abendessen', rezeptById(t.a)]].forEach(function(m){
         var art = m[0], r = m[2];
@@ -971,7 +1002,7 @@ nav button.aktiv{color:var(--tuerkis-dunkel);background:var(--tuerkis-hell)}
           d.innerHTML = detailHtml(r, (art === 'a' && t.d) ? einst.personen * 2 : undefined);
           box.appendChild(d);
         }
-        if(art === 'a' && !t.rest && i < 6){
+        if(art === 'a' && !t.rest && i < anzahlTage - 1){
           var rb = document.createElement('button');
           rb.className = 'knopf tausch';
           rb.textContent = t.d ? '↩ Reste-Tag entfernen' : '🔁 Morgen nochmal essen';
@@ -1042,17 +1073,26 @@ nav button.aktiv{color:var(--tuerkis-dunkel);background:var(--tuerkis-hell)}
       return;
     }
     var items = einkaufListe();
-    var summe = 0, erledigt = 0;
+    var summe = 0, erledigt = 0, gekauft = 0;
     items.forEach(function(it){
       summe += it.preis;
-      if(abgehakt[it.id]) erledigt++;
+      if(abgehakt[it.id]){ erledigt++; gekauft += it.preis; }
     });
     kopf.innerHTML = '<div class="karte"><div class="bar-zeile"><span>Zu kaufen<br><b>' + (items.length - erledigt) + ' von ' + items.length + '</b></span>' +
       '<span style="text-align:right">Ungefähr<br><b>ca. ' + euro(summe) + '</b></span></div>' +
-      '<button class="knopf gross-knopf" id="ek-reset" style="margin-top:0">↺ Alles zurücksetzen</button></div>';
+      '<p class="hinweis" style="margin:0 0 12px">Schon eingekauft (abgehakt): ca. ' + euro(gekauft) + '</p>' +
+      '<button class="knopf gross-knopf" id="ek-reset" style="margin-top:0">↺ Alle Haken entfernen</button>' +
+      '<button class="knopf gross-knopf" id="ek-loeschen" style="background:var(--blau)">🗑 Plan löschen (Verbrauch auf 0)</button>' +
+      '<p class="hinweis">Der Verbrauch oben im Plan zeigt, was der ganze Wochenplan kostet. Er ändert sich nur, wenn du den Plan änderst oder löschst. Die Haken ändern ihn nicht.</p></div>';
     $('ek-reset').addEventListener('click', function(){
       if(!window.confirm('Alle Haken entfernen?')) return;
       abgehakt = {}; abgehaktSpeichern(); zeichneEinkauf();
+    });
+    $('ek-loeschen').addEventListener('click', function(){
+      if(!window.confirm('Plan und Einkaufszettel löschen? Der Verbrauch geht dann auf 0.')) return;
+      plan = null; planOffen = null; planSpeichern();
+      abgehakt = {}; abgehaktSpeichern();
+      zeichneEinkauf();
     });
 
     BEREICHE.forEach(function(b){
