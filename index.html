@@ -198,6 +198,9 @@ nav button.aktiv{color:var(--tuerkis-dunkel);background:var(--tuerkis-hell)}
 .ek-name{font-weight:800;font-size:21px}
 .ek-sub{color:var(--grau);font-size:16px}
 .ek-preis{font-weight:800;color:var(--tuerkis-dunkel);white-space:nowrap}
+.hilfe ul{margin:0;padding-left:22px}
+.hilfe li{margin-bottom:10px}
+.hilfe p{margin:0}
 .ek-zeile.erledigt{background:#e2f5e4;color:#2f6b3c}
 .ek-zeile.erledigt .ek-name{text-decoration:line-through;color:#2f6b3c}
 .ek-zeile.erledigt .ek-sub,.ek-zeile.erledigt .ek-preis{color:#4f8a5b}
@@ -246,6 +249,8 @@ nav button.aktiv{color:var(--tuerkis-dunkel);background:var(--tuerkis-hell)}
 
   <!-- EINSTELLUNGEN -->
   <section class="seite" id="seite-einstellungen">
+
+    <button class="knopf gold gross-knopf" id="hilfe-auf" style="margin:0 0 16px">❓ Anleitung: So funktioniert die App</button>
 
     <div class="karte">
       <h2>💶 Wochen-Budget</h2>
@@ -319,7 +324,103 @@ nav button.aktiv{color:var(--tuerkis-dunkel);background:var(--tuerkis-hell)}
       </div>
     </div>
 
-    <p class="stand">Peters Sparkoch · Version 2.2</p>
+    <p class="stand">Peters Sparkoch · Version 2.3</p>
+  </section>
+
+  <!-- ANLEITUNG -->
+  <section class="seite hilfe" id="seite-hilfe">
+    <button class="knopf gross-knopf" id="hilfe-zurueck" style="margin:0 0 16px">◀ Zurück zu den Einstellungen</button>
+
+    <div class="karte">
+      <h2>Was macht die App?</h2>
+      <p>Peters Sparkoch plant gesundes, günstiges Essen für dein Budget: <b>Frühstück und Abendessen</b>. Mittagessen gibt es nicht.</p>
+    </div>
+
+    <div class="karte">
+      <h2>1. Installieren</h2>
+      <ul>
+        <li><b>Android:</b> Im Chrome-Browser öffnen, oben rechts auf die drei Punkte ⋮, dann „Zum Startbildschirm hinzufügen“ oder „App installieren“.</li>
+        <li><b>iPhone:</b> In Safari öffnen, auf das Teilen-Symbol, dann „Zum Home-Bildschirm“.</li>
+        <li>Öffne die App einmal mit Internet. Danach geht sie auch ohne Netz, zum Beispiel im Supermarkt.</li>
+      </ul>
+    </div>
+
+    <div class="karte">
+      <h2>2. Zuerst: Einstellungen ⚙️</h2>
+      <ul>
+        <li><b>Wochen-Budget:</b> Was du für 7 Tage ausgeben willst.</li>
+        <li><b>Budget für 3 Tage:</b> Gilt nur für den 3-Tage-Plan.</li>
+        <li><b>Anzahl Personen:</b> 1 bis 6. Mengen und Preise passen sich an.</li>
+        <li><b>Einkaufsort:</b> Discounter (Aldi, Lidl …) oder Supermarkt (Rewe, Edeka …). Dort sind die Preise 20 % höher.</li>
+        <li><b>Ernährung:</b> mit Fleisch, vegetarisch oder gemischt.</li>
+        <li><b>Meine Geräte:</b> Kreuze an, was du hast. Der Plan nutzt nur diese Geräte.</li>
+        <li><b>Abneigungen:</b> Zutaten, die du nicht magst, zum Beispiel „Pilze“.</li>
+        <li><b>Preise:</b> Du kannst jeden Preis ändern, wenn er bei dir anders ist.</li>
+      </ul>
+    </div>
+
+    <div class="karte">
+      <h2>3. Vorrat 🥫</h2>
+      <ul>
+        <li>Tippe an, was du zu Hause hast. Grün heißt „habe ich“.</li>
+        <li>Öl, Brühe, Salz und Gewürze sind schon angekreuzt.</li>
+        <li>Was im Vorrat ist, kommt <b>nicht</b> auf den Einkaufszettel und kostet kein Budget.</li>
+        <li><b>„⭐ Grundausstattung“</b> hakt Nudeln, Reis, Mehl und Gewürze auf einmal an.</li>
+        <li><b>„🍳 Was kann ich damit kochen?“</b> zeigt dir passende Rezepte.</li>
+      </ul>
+    </div>
+
+    <div class="karte">
+      <h2>4. Plan 📅</h2>
+      <ul>
+        <li><b>„Wochenplan (7 Tage)“</b> oder <b>„Nur 3 Tage“</b> erstellt Frühstück und Abendessen mit einem Knopfdruck.</li>
+        <li>Der <b>Balken oben</b> zeigt, wie viel vom Budget verbraucht ist. Er wird rot, wenn du drüber bist. Alle Preise sind ungefähre Werte (ca.).</li>
+        <li>Tippe auf ein Gericht: Du siehst Zutaten, Schritte, Kalorien und Preis.</li>
+        <li><b>„🔄 Austauschen“</b> gibt dir ein anderes Gericht.</li>
+        <li><b>„🔁 Morgen nochmal essen“:</b> Du kochst heute für 2 Tage, morgen wärmst du nur auf. Das spart Zeit.</li>
+        <li><b>★ Stern:</b> Merke dir Lieblingsgerichte.</li>
+      </ul>
+    </div>
+
+    <div class="karte">
+      <h2>5. Einkauf 🛒</h2>
+      <ul>
+        <li>Der Zettel entsteht automatisch aus dem Plan, sortiert nach Bereichen, mit Menge und ungefährem Preis.</li>
+        <li><b>Antippen = liegt im Einkaufswagen.</b> Die Zeile wird grün und rutscht nach unten.</li>
+        <li><b>„↺ Alle Haken entfernen“:</b> Für den nächsten Einkauf. Das ändert den Verbrauch im Plan nicht.</li>
+        <li><b>„🗑 Plan löschen“:</b> Löscht den Plan und setzt den Verbrauch auf 0.</li>
+      </ul>
+    </div>
+
+    <div class="karte">
+      <h2>6. Rezepte 🍽️</h2>
+      <ul>
+        <li>Alle Abendessen mit Filtern: Favoriten, Aus meinem Vorrat kochen, Zeit, Gerät (Herd, Backofen, Heißluftfritteuse, Schnellkochtopf) und Art (Fleisch, Fisch, vegetarisch).</li>
+        <li><b>Portionen − / +:</b> Im geöffneten Rezept stellst du die Portionen ein. Koch mehr, dann hast du morgen Reste.</li>
+      </ul>
+    </div>
+
+    <div class="karte">
+      <h2>7. Jetzt kochen 👨‍🍳</h2>
+      <ul>
+        <li>Im Rezept auf <b>„Jetzt kochen“</b> tippen.</li>
+        <li>Erst siehst du die Zutaten, dann einen Schritt pro Bildschirm in großer Schrift, mit „Weiter“ und „Zurück“.</li>
+        <li>Steht im Schritt eine Zeit, gibt es einen <b>Timer</b> mit Ton.</li>
+        <li>Der Bildschirm bleibt an, wenn dein Handy das kann.</li>
+        <li>Mit ✕ beendest du den Modus.</li>
+      </ul>
+    </div>
+
+    <div class="karte">
+      <h2>Gut zu wissen</h2>
+      <ul>
+        <li>Alles bleibt <b>nur auf deinem Handy</b>. Es gibt kein Konto und keinen Server.</li>
+        <li>Preise sind <b>ungefähre Durchschnittspreise</b> für deutsche Discounter, keine Live-Preise.</li>
+        <li>Neue Version nicht sichtbar? Schließe die App ganz und öffne sie mit Internet nochmal.</li>
+      </ul>
+    </div>
+
+    <button class="knopf gross-knopf" id="hilfe-zurueck2" style="margin:0 0 16px">◀ Zurück zu den Einstellungen</button>
   </section>
 </main>
 
@@ -353,7 +454,7 @@ nav button.aktiv{color:var(--tuerkis-dunkel);background:var(--tuerkis-hell)}
   ];
   var TITEL = {
     plan:'Wochenplan', einkauf:'Einkauf', rezepte:'Rezepte',
-    vorrat:'Vorrat', einstellungen:'Einstellungen'
+    vorrat:'Vorrat', einstellungen:'Einstellungen', hilfe:'Anleitung'
   };
 
   var STANDARD = {
@@ -428,6 +529,11 @@ nav button.aktiv{color:var(--tuerkis-dunkel);background:var(--tuerkis-hell)}
   document.querySelectorAll('nav button').forEach(function(b){
     b.addEventListener('click', function(){ zeigeSeite(b.dataset.seite); });
   });
+
+  /* ---------- Anleitung ---------- */
+  $('hilfe-auf').addEventListener('click', function(){ zeigeSeite('hilfe'); });
+  $('hilfe-zurueck').addEventListener('click', function(){ zeigeSeite('einstellungen'); });
+  $('hilfe-zurueck2').addEventListener('click', function(){ zeigeSeite('einstellungen'); });
 
   /* ---------- Budget ---------- */
   var budgetFeld = $('budget');
