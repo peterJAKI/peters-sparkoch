@@ -351,7 +351,7 @@ nav button.aktiv{color:var(--tuerkis-dunkel);background:var(--tuerkis-hell)}
       <input type="file" id="laden-datei" accept=".json,application/json" hidden>
     </div>
 
-    <p class="stand">Peters Sparkoch · Version 2.7</p>
+    <p class="stand">Peters Sparkoch · Version 2.8</p>
   </section>
 
   <!-- ANLEITUNG -->
@@ -425,6 +425,7 @@ nav button.aktiv{color:var(--tuerkis-dunkel);background:var(--tuerkis-hell)}
     <div class="karte">
       <h2>6. Rezepte 🍽️</h2>
       <ul>
+        <li>Gewürze, Öl und Essig stehen in Löffeln (TL = Teelöffel, EL = Esslöffel, Prise), zum Beispiel „½ TL Salz“. Die Mengen passen sich an die Personenzahl an.</li>
         <li>Alle Abendessen mit Filtern: Favoriten, Art des Gerichts (<b>🥔 Deftig &amp; Hausmannskost</b> oder <b>🎄 Festtagsessen</b> wie Schweinebraten mit Knödeln und Rotkohl), Aus meinem Vorrat kochen, Zeit (bis 90 Minuten), Gerät (Herd, Backofen, Heißluftfritteuse, Schnellkochtopf) und Art (Fleisch, Fisch, vegetarisch).</li>
         <li>Deftiges und Festtagsessen erscheint im automatischen Plan nur, wenn du es in den Einstellungen unter <b>„🥔 Im Plan erlaubt“</b> erlaubst. Festtagsessen ist dort standardmäßig aus.</li>
         <li><b>Portionen − / +:</b> Im geöffneten Rezept stellst du die Portionen ein. Koch mehr, dann hast du morgen Reste.</li>
@@ -471,6 +472,7 @@ nav button.aktiv{color:var(--tuerkis-dunkel);background:var(--tuerkis-hell)}
 <script src="daten.js"></script>
 <script src="daten-mehr.js"></script>
 <script src="daten-deftig.js"></script>
+<script src="gewuerze.js"></script>
 <script src="kalorien.js"></script>
 <script>
 (function(){
@@ -832,6 +834,24 @@ nav button.aktiv{color:var(--tuerkis-dunkel);background:var(--tuerkis-hell)}
     return t;
   }
 
+  /* Zutat als Text: Gewürze, Öl, Essig usw. in Löffeln (TL/EL/Prise), alles andere in g, ml oder Stück */
+  function bruchText(q){
+    var ganz = Math.floor(q);
+    var rest = {0:'', 0.25:'¼', 0.5:'½', 0.75:'¾'}[q - ganz];
+    return (ganz > 0 ? ganz : '') + rest;
+  }
+  function zutatText(id, v){
+    var z = ZUTATEN[id], l = LOEFFEL[id];
+    if(!l) return fmtMenge(v, z.einheit) + ' ' + z.name;
+    var tl = v / l.tl;
+    if(tl < 0.2){
+      var p = Math.max(1, Math.round(v / l.prise));
+      return p + (p === 1 ? ' Prise ' : ' Prisen ') + z.name;
+    }
+    if(tl < 2.5) return bruchText(Math.max(0.25, Math.round(tl * 4) / 4)) + ' TL ' + z.name;
+    return bruchText(Math.max(0.5, Math.round(tl / 3 * 2) / 2)) + ' EL ' + z.name;
+  }
+
   /* ---------- Rezepte-Seite ---------- */
   var ART_NAME = {fleisch:'🍗 Fleisch', fisch:'🐟 Fisch', vegetarisch:'🥦 Vegetarisch'};
   var rf = {zeit:0, geraet:'', art:'', passend:true, fav:false, vorrat:'', kat:'', offen:null};
@@ -900,7 +920,7 @@ nav button.aktiv{color:var(--tuerkis-dunkel);background:var(--tuerkis-hell)}
       '<h3>Zutaten für ' + n + (n === 1 ? ' Portion' : ' Portionen') + '</h3><ul>';
     r.zutaten.forEach(function(x){
       var z = ZUTATEN[x[0]];
-      h += '<li>' + fmtMenge(x[1] * n, z.einheit) + ' ' + z.name + '</li>';
+      h += '<li>' + zutatText(x[0], x[1] * n) + '</li>';
     });
     h += '</ul><h3>So geht’s</h3><ol>';
     r.schritte.forEach(function(s){ h += '<li>' + s + '</li>'; });
@@ -1801,7 +1821,7 @@ $('plan-neu1').addEventListener('click', function(){ neuerPlan(1); });
       h += '<div class="koch-ueber">Das brauchst du für ' + n + (n === 1 ? ' Person' : ' Personen') + ':</div><ul class="koch-liste">';
       r.zutaten.forEach(function(x){
         var z = ZUTATEN[x[0]];
-        h += '<li>' + fmtMenge(x[1] * n, z.einheit) + ' ' + z.name + '</li>';
+        h += '<li>' + zutatText(x[0], x[1] * n) + '</li>';
       });
       h += '</ul>';
     } else {
