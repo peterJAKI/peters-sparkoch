@@ -262,6 +262,15 @@ nav button.aktiv{color:var(--tuerkis-dunkel);background:var(--tuerkis-hell)}
     </div>
 
     <div class="karte">
+      <h2>💶 Budget für 1 Tag</h2>
+      <div class="zeile">
+        <input type="number" id="budget1" inputmode="decimal" min="0" step="1" aria-label="Budget für den 1-Tag-Plan in Euro">
+        <div style="flex:0 0 auto;font-size:26px;font-weight:800">€</div>
+      </div>
+      <p class="hinweis">Gilt nur, wenn du einen Plan für 1 Tag machst.</p>
+    </div>
+
+    <div class="karte">
       <h2>💶 Budget für 3 Tage</h2>
       <div class="zeile">
         <input type="number" id="budget3" inputmode="decimal" min="0" step="1" aria-label="Budget für den 3-Tage-Plan in Euro">
@@ -324,7 +333,7 @@ nav button.aktiv{color:var(--tuerkis-dunkel);background:var(--tuerkis-hell)}
       </div>
     </div>
 
-    <p class="stand">Peters Sparkoch · Version 2.3</p>
+    <p class="stand">Peters Sparkoch · Version 2.4</p>
   </section>
 
   <!-- ANLEITUNG -->
@@ -373,7 +382,7 @@ nav button.aktiv{color:var(--tuerkis-dunkel);background:var(--tuerkis-hell)}
     <div class="karte">
       <h2>4. Plan 📅</h2>
       <ul>
-        <li><b>„Wochenplan (7 Tage)“</b> oder <b>„Nur 3 Tage“</b> erstellt Frühstück und Abendessen mit einem Knopfdruck.</li>
+        <li><b>„Wochenplan (7 Tage)“</b>, <b>„Nur 3 Tage“</b> oder <b>„Nur 1 Tag“</b> erstellt Frühstück und Abendessen mit einem Knopfdruck. Jede Länge hat ihr eigenes Budget in den Einstellungen.</li>
         <li>Der <b>Balken oben</b> zeigt, wie viel vom Budget verbraucht ist. Er wird rot, wenn du drüber bist. Alle Preise sind ungefähre Werte (ca.).</li>
         <li>Tippe auf ein Gericht: Du siehst Zutaten, Schritte, Kalorien und Preis.</li>
         <li><b>„🔄 Austauschen“</b> gibt dir ein anderes Gericht.</li>
@@ -460,6 +469,7 @@ nav button.aktiv{color:var(--tuerkis-dunkel);background:var(--tuerkis-hell)}
   var STANDARD = {
     budget: 50,
     budget3: 20,
+    budget1: 10,
     personen: 1,
     ort: 'discounter',
     ernaehrung: 'gemischt',
@@ -542,6 +552,16 @@ nav button.aktiv{color:var(--tuerkis-dunkel);background:var(--tuerkis-hell)}
     var v = parseFloat(String(budgetFeld.value).replace(',', '.'));
     if(isNaN(v) || v < 0) return;
     einst.budget = Math.round(v * 100) / 100;
+    speichern();
+  });
+
+  /* ---------- Budget für 1 Tag ---------- */
+  var budget1Feld = $('budget1');
+  budget1Feld.value = einst.budget1;
+  budget1Feld.addEventListener('input', function(){
+    var v = parseFloat(String(budget1Feld.value).replace(',', '.'));
+    if(isNaN(v) || v < 0) return;
+    einst.budget1 = Math.round(v * 100) / 100;
     speichern();
   });
 
@@ -871,7 +891,7 @@ nav button.aktiv{color:var(--tuerkis-dunkel);background:var(--tuerkis-hell)}
   function ladePlan(){
     try{
       var p = JSON.parse(localStorage.getItem(PLAN_KEY));
-      if(p && p.tage && (p.tage.length === 7 || p.tage.length === 3) && p.tage.every(function(t){
+      if(p && p.tage && (p.tage.length === 7 || p.tage.length === 3 || p.tage.length === 1) && p.tage.every(function(t){
         return rezeptById(t.a) && fruehById(t.f);
       })) return p;
     }catch(x){}
@@ -936,7 +956,7 @@ nav button.aktiv{color:var(--tuerkis-dunkel);background:var(--tuerkis-hell)}
   }
 
   /* Wochenplan: Wochen-Budget. 3-Tage-Plan: eigenes Budget für 3 Tage. */
-  function budgetFuer(tageAnzahl){ return tageAnzahl === 3 ? einst.budget3 : einst.budget; }
+  function budgetFuer(tageAnzahl){ return tageAnzahl === 1 ? einst.budget1 : (tageAnzahl === 3 ? einst.budget3 : einst.budget); }
 
   function erzeugePlan(anzahl){
     var pool = REZEPTE.filter(rezeptPasst);
@@ -961,7 +981,7 @@ nav button.aktiv{color:var(--tuerkis-dunkel);background:var(--tuerkis-hell)}
   }
 
   function neuerPlan(anzahl){
-    anzahl = anzahl === 3 ? 3 : 7;
+    anzahl = (anzahl === 3 || anzahl === 1) ? anzahl : 7;
     if(plan && !window.confirm('Neuen Plan erstellen? Der alte Plan wird ersetzt.')) return;
     var p = erzeugePlan(anzahl);
     if(!p){
@@ -1032,9 +1052,11 @@ nav button.aktiv{color:var(--tuerkis-dunkel);background:var(--tuerkis-hell)}
       kopf.innerHTML = '<div class="karte leer"><div class="gross">📅</div><h2>Dein Plan</h2>' +
         '<p>Mit einem Knopfdruck: Frühstück und Abendessen, passend zu deinem Budget (Woche: ' +
         euro(einst.budget) + ', 3 Tage: ' + euro(einst.budget3) + ').</p><button class="knopf gold gross-knopf" id="plan-neu7">✨ Wochenplan (7 Tage)</button>' +
-        '<button class="knopf gross-knopf" id="plan-neu3">✨ Nur 3 Tage</button></div>';
+        '<button class="knopf gross-knopf" id="plan-neu3">✨ Nur 3 Tage</button>' +
+        '<button class="knopf gross-knopf" id="plan-neu1">✨ Nur 1 Tag</button></div>';
       $('plan-neu7').addEventListener('click', function(){ neuerPlan(7); });
       $('plan-neu3').addEventListener('click', function(){ neuerPlan(3); });
+$('plan-neu1').addEventListener('click', function(){ neuerPlan(1); });
       return;
     }
 
@@ -1051,12 +1073,15 @@ nav button.aktiv{color:var(--tuerkis-dunkel);background:var(--tuerkis-hell)}
       '<span style="text-align:right">' + (drueber ? 'Über Budget' : 'Übrig') + '<br><b class="' + (drueber ? 'ueber' : '') + '">' +
       'ca. ' + euro(Math.abs(rest)) + '</b></span></div>' +
       '<div class="bar"><div class="fuell' + (drueber ? ' drueber' : '') + '" style="width:' + pct + '%"></div></div>' +
-      '<p class="hinweis">Budget ' + euro(budget) + (anzahlTage === 7 ? ' pro Woche' : ' für ' + anzahlTage + ' Tage') + ' · ' + n + (n === 1 ? ' Person' : ' Personen') + ' · ' +
+      '<p class="hinweis">Budget ' + euro(budget) + (anzahlTage === 7 ? ' pro Woche' : (anzahlTage === 1 ? ' für 1 Tag' : ' für ' + anzahlTage + ' Tage')) + ' · ' + n + (n === 1 ? ' Person' : ' Personen') + ' · ' +
       (einst.ort === 'discounter' ? 'Discounter' : 'Supermarkt') + '<br>Alle Preise sind ungefähre Werte (ca.).<br>Kalorien pro Person, nur Frühstück + Abendessen.</p></div>' +
-      '<div class="zeile" style="margin-bottom:16px"><button class="knopf gold" id="plan-neu7">🔄 Neuer Wochenplan</button>' +
-      '<button class="knopf" id="plan-neu3">🔄 Neuer 3-Tage-Plan</button></div>';
+      '<div class="filter-titel">Neuen Plan erstellen:</div>' +
+      '<div class="zeile" style="margin-bottom:16px"><button class="knopf gold" id="plan-neu7">🔄 7 Tage</button>' +
+      '<button class="knopf" id="plan-neu3">🔄 3 Tage</button>' +
+      '<button class="knopf" id="plan-neu1">🔄 1 Tag</button></div>';
     $('plan-neu7').addEventListener('click', function(){ neuerPlan(7); });
     $('plan-neu3').addEventListener('click', function(){ neuerPlan(3); });
+$('plan-neu1').addEventListener('click', function(){ neuerPlan(1); });
 
     plan.tage.forEach(function(t, i){
       var k = document.createElement('div');
