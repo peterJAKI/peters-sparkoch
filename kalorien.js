@@ -22,6 +22,13 @@ KCAL.rotkohl = 55; KCAL.sauerkraut = 20; KCAL.weisskohl = 25; KCAL.knoedel = 150
 KCAL.semmelbroesel = 360; KCAL.sahne = 300; KCAL.preiselbeeren = 150; KCAL.tellerlinsen = 330; KCAL.gelbeerbsen = 340;
 KCAL.weisse_bohnen = 90; KCAL.graupen = 350; KCAL.majoran = 270; KCAL.muskat = 500; KCAL.zucker = 400;
 
+/* Weitere Zutaten (afrikanische und türkische Küche) */
+KCAL.kreuzkuemmel = 375; KCAL.koriander = 300; KCAL.zimt = 260; KCAL.kurkuma = 310; KCAL.ras_el_hanout = 300;
+KCAL.chiliflocken = 280; KCAL.oregano = 270; KCAL.minze = 280; KCAL.sumach = 250; KCAL.ingwer = 335;
+KCAL.petersilie = 40; KCAL.okra = 35; KCAL.rinderhack = 220; KCAL.fladenbrot = 400; KCAL.yufka = 70;
+KCAL.harissa = 90; KCAL.tahin = 600; KCAL.erdnussbutter = 600; KCAL.erdnuesse = 600; KCAL.mandeln = 580;
+KCAL.datteln = 280; KCAL.rosinen = 300; KCAL.maisgriess = 350;
+
 /* Kalorien einer Portion (ungefähr, auf 5 gerundet) */
 function kcalVon(zutaten, portionen){
   var s = 0;

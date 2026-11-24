@@ -10,7 +10,11 @@ var LOEFFEL = {
   salz:{tl:6, prise:0.5}, pfeffer:{tl:2.5, prise:0.5}, paprikapulver:{tl:2.5, prise:0.5}, curry:{tl:2.5, prise:0.5},
   kraeuter:{tl:1.5, prise:0.5}, majoran:{tl:1, prise:0.5}, muskat:{tl:2.5, prise:0.5}, zucker:{tl:5, prise:0.5},
   oel:{tl:5, prise:0.5}, essig:{tl:5, prise:0.5}, sojasauce:{tl:5, prise:0.5}, senf:{tl:5, prise:0.5},
-  tomatenmark:{tl:5, prise:0.5}
+  tomatenmark:{tl:5, prise:0.5},
+  kreuzkuemmel:{tl:2.5, prise:0.5}, koriander:{tl:2, prise:0.5}, zimt:{tl:2.5, prise:0.5}, kurkuma:{tl:3, prise:0.5},
+  ras_el_hanout:{tl:2.5, prise:0.5}, chiliflocken:{tl:1.5, prise:0.3}, oregano:{tl:1, prise:0.3}, minze:{tl:0.7, prise:0.3},
+  sumach:{tl:3, prise:0.5}, ingwer:{tl:2.5, prise:0.5}, harissa:{tl:7, prise:2}, tahin:{tl:5, prise:2},
+  erdnussbutter:{tl:5, prise:2}
 };
 
 /* Salz und Pfeffer in alle Rezepte eintragen, wenn dort noch keine Menge steht:
